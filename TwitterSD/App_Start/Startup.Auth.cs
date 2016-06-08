@@ -51,8 +51,8 @@ namespace TwitterSD
             //    clientSecret: "");
 
             //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
+            //   consumerKey: "Wv1B17cYiPwMp3x5cqq8YC9h1",
+            //   consumerSecret: "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
 
             //app.UseFacebookAuthentication(
             //   appId: "",
