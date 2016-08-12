@@ -3,16 +3,21 @@
 </script>
 <script type="text/javascript">
     google.maps.event.addDomListener(window, "load", initMap);
+    window.addMarkers=new Array();
     function initMap() {
-        var map = new google.maps.Map(document.getElementById('map_canvas'), {
+        window.map = new google.maps.Map(document.getElementById('map_canvas'), {
             zoom: 11,
             center: { lat: 41.876, lng: -87.624 }
         });
 
         var ctaLayer = new google.maps.KmlLayer({
-            url: 'http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=2016-06-05&endtime=2016-06-07',
-            map: map
+            url: 'http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=2016-07-05&endtime=2016-08-12&minmagnitude=5',
+            map: window.map
         });
+        for(i=0;i<window.addMarkers.length;i++){
+            window.addMarkers[i]();
+        }
+        
     }
 
 </script>
@@ -29,11 +34,41 @@
 <br />
 <!-- This is the div that will contain the Google Map -->
 <div id="map_canvas" style="height: 550px;"></div>
-
-  
-
+<div>
 
 
-   
+    @model IEnumerable<Tweetinvi.Models.ITweet>
 
-   
+
+
+
+    @{
+
+
+        foreach (var item in Model)
+        {
+            <script type="text/javascript">
+    addMarkers.push(function(){
+        var myLatLng = { lat: @item.Coordinates.Latitude.ToString().Replace(",","."), lng: @item.Coordinates.Longitude.ToString().Replace(",", ".") };
+
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            animation: google.maps.Animation.DROP,
+            title: 'Hello World!'
+        });
+        marker.setMap(window.map);
+    });
+
+
+
+
+
+            </script>
+
+
+        }
+    }
+
+
+
+</div>
