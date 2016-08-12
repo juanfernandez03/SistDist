@@ -22,7 +22,7 @@ namespace TwitterSD.Controllers
             Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
 
             // Publish the Tweet "Hello World" on your Timeline
-            var algo = Tweetinvi.Search.SearchTweets("quake");
+            var algo = Tweetinvi.Search.SearchTweets("quake terremoto #quake #terremoto");
             List<Tweetinvi.Models.ITweet> tieneCor = new List<Tweetinvi.Models.ITweet>();
             if (algo != null)
             {
@@ -41,28 +41,28 @@ namespace TwitterSD.Controllers
 
 
 
-         public async Task<ActionResult> BeginAsync()
-        {
-            //var auth = new MvcSignInAuthorizer
-            var auth = new MvcAuthorizer
-            {
-                CredentialStore = new SessionStateCredentialStore
-                {
-                    ConsumerKey = ConfigurationManager.AppSettings["Wv1B17cYiPwMp3x5cqq8YC9h1"],
-                    ConsumerSecret = ConfigurationManager.AppSettings["PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL"]
-                }
-            };
-            string twitterCallbackUrl = Request.Url.ToString().Replace("Begin", "Complete");
-            return await auth.BeginAuthorizationAsync(new Uri(twitterCallbackUrl));
-        }
-         public async Task<ActionResult> CompleteAsync()
-         {
-             var auth = new MvcAuthorizer
-             {
-                 CredentialStore = new SessionStateCredentialStore()
-             };
+        // public async Task<ActionResult> BeginAsync()
+        //{
+        //    //var auth = new MvcSignInAuthorizer
+        //    var auth = new MvcAuthorizer
+        //    {
+        //        CredentialStore = new SessionStateCredentialStore
+        //        {
+        //            ConsumerKey = ConfigurationManager.AppSettings["Wv1B17cYiPwMp3x5cqq8YC9h1"],
+        //            ConsumerSecret = ConfigurationManager.AppSettings["PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL"]
+        //        }
+        //    };
+        //    string twitterCallbackUrl = Request.Url.ToString().Replace("Begin", "Complete");
+        //    return await auth.BeginAuthorizationAsync(new Uri(twitterCallbackUrl));
+        //}
+        // public async Task<ActionResult> CompleteAsync()
+        // {
+             //var auth = new MvcAuthorizer
+             //{
+             //    CredentialStore = new SessionStateCredentialStore()
+             //};
 
-             await auth.CompleteAuthorizeAsync(Request.Url);
+             //await auth.CompleteAuthorizeAsync(Request.Url);
 
              // This is how you access credentials after authorization.
              // The oauthToken and oauthTokenSecret do not expire.
@@ -74,15 +74,15 @@ namespace TwitterSD.Controllers
              // When you've loaded all 4 credentials, LINQ to Twitter will let 
              //   you make queries without re-authorizing.
              //
-             var credentials = auth.CredentialStore;
-             string oauthToken = credentials.OAuthToken;
-             string oauthTokenSecret = credentials.OAuthTokenSecret;
-             string screenName = credentials.ScreenName;
-             ulong userID = credentials.UserID;
-             //
+         //    var credentials = auth.CredentialStore;
+         //    string oauthToken = credentials.OAuthToken;
+         //    string oauthTokenSecret = credentials.OAuthTokenSecret;
+         //    string screenName = credentials.ScreenName;
+         //    ulong userID = credentials.UserID;
+         //    //
 
-             return RedirectToAction("Index", "Home");
-         }
+         //    return RedirectToAction("Index", "Home");
+         //}
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -90,20 +90,20 @@ namespace TwitterSD.Controllers
             return View();
         }
 
-        public async Task<ActionResult> HomeTimelineAsync()
-        {
-            var auth = new MvcAuthorizer
-            {
-                CredentialStore = new SessionStateCredentialStore()
-            };
-            var ctx = new TwitterContext(auth);
+        //public async Task<ActionResult> HomeTimelineAsync()
+        //{
+        //    var auth = new MvcAuthorizer
+        //    {
+        //        CredentialStore = new SessionStateCredentialStore()
+        //    };
+        //    var ctx = new TwitterContext(auth);
 
-            var tweets = ctx.Status.Where(x=>x.Type == StatusType.Home).FirstOrDefault();
+        //    var tweets = ctx.Status.Where(x=>x.Type == StatusType.Home).FirstOrDefault();
                 
                 
 
-            return View(tweets);
-        }
+        //    return View(tweets);
+        //}
 
         public ActionResult Contact()
         {
