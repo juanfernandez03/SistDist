@@ -22,11 +22,11 @@ namespace TwitterSD.Controllers
             Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
 
             // Publish the Tweet "Hello World" on your Timeline
-            var algo = Tweetinvi.Search.SearchTweets("quake terremoto #quake #terremoto");
-            List<Tweetinvi.Models.ITweet> tieneCor = new List<Tweetinvi.Models.ITweet>();
-            if (algo != null)
+            var tweet = Tweetinvi.Search.SearchTweets("quake&locale=california");
+            List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
+            if (tweet != null)
             {
-                 tieneCor = algo.Where(x => x.Coordinates != null).ToList();
+                isCor = tweet.Where(x => x.Coordinates != null).ToList();
 
             }
             else
@@ -36,7 +36,7 @@ namespace TwitterSD.Controllers
             }
             ViewData["fecha"] = DateTime.Now.Date;
 
-            return View(tieneCor);
+            return View(isCor);
         }
 
 
