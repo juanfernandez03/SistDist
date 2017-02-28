@@ -2,31 +2,50 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using Tweetinvi;
 
 namespace TwitterSD.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(string endDate)
         {
-            
+            if (string.IsNullOrEmpty(endDate))
+            {
+                endDate = DateTime.Now.ToString("MM/dd/yyyy");
+            }
+            DateTime dt_endDate;
+            DateTime.TryParseExact(endDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt_endDate);
+            DateTime dt_startDate = dt_endDate.AddDays(-7);
+            string startDate = dt_startDate.ToString("MM/dd/yyyy");
             //string aaaa = GetTweets(30);
             //var x = HomeTimelineAsync().Result;
             // Set up your credentials (https://apps.twitter.com)
             Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
-
+            //string query = "quake OR Tremblement de terre OR terremoto OR sismo OR earthquake &until=" + dt_startDate.ToString("yyyy-MM-dd");
+            string query = "quake";
             // Publish the Tweet "Hello World" on your Timeline
-            var tweet = Tweetinvi.Search.SearchTweets("quake&locale=california");
+            var tweet = Tweetinvi.Search.SearchTweets(query);
             List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
             if (tweet != null)
             {
                 isCor = tweet.Where(x => x.Coordinates != null).ToList();
+                foreach (var item in isCor)
+                {
+                    var user = Tweetinvi.User.GetUserFromId(item.CreatedBy.Id);
+
+                }
 
             }
             else
@@ -34,12 +53,35 @@ namespace TwitterSD.Controllers
                 ViewData["fecha"] = "No se pudieron cargar los tweets";
 
             }
-            ViewData["fecha"] = DateTime.Now.Date;
+            ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd")+ "&minmagnitude=5";
 
             return View(isCor);
         }
 
-
+        string GET(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            try
+            {
+                WebResponse response = request.GetResponse();
+                using (System.IO.Stream responseStream = response.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
+                    return reader.ReadToEnd();
+                }
+            }
+            catch (WebException ex)
+            {
+                WebResponse errorResponse = ex.Response;
+                using (System.IO.Stream responseStream = errorResponse.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
+                    String errorText = reader.ReadToEnd();
+                    // log errorText
+                }
+                throw;
+            }
+        }
 
         // public async Task<ActionResult> BeginAsync()
         //{
