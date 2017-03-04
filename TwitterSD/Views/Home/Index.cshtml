@@ -96,13 +96,26 @@
                         title: 'Hello World!'
                     });
                     var infoWindow = new google.maps.InfoWindow({
-                        content: "@item.Text"
+                        content: ('<p>Event Name: '+ '@item.Text'+'</p>' +
+            '<p>User: '+'@item.CreatedBy.UserIdentifier'+'</p>' +
+            '<p>Cause: '+'bb'+'</p>' +
+            '<p>Date: '+'ffff'+'</p>' +
+                '<p>Time: '+'asdf'+'</p>' +
+                '<button onclick="myFunction(@item.CreatedBy.Id)">Click me</button>')
+
                     });
                     google.maps.event.addListener(marker, 'click', function () {
                         infoWindow.open(map, marker);
                     });
                     marker.setMap(window.map);
                 });
+                var idU;
+
+                function myFunction(varthis) {
+                    debugger;
+                    idU = varthis;
+                    window.location ='/Home/viewProfile/'+varthis;
+                };
             </script>
 
 

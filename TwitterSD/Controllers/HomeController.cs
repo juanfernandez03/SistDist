@@ -14,6 +14,7 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Tweetinvi;
+using TwitterSD.Models;
 
 namespace TwitterSD.Controllers
 {
@@ -38,13 +39,14 @@ namespace TwitterSD.Controllers
             // Publish the Tweet "Hello World" on your Timeline
             var tweet = Tweetinvi.Search.SearchTweets(query);
             List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
-            if (tweet != null)
+            List<Tweetinvi.Models.IUser> listUserInfo = new List<Tweetinvi.Models.IUser>();
+                if (tweet != null)
             {
                 isCor = tweet.Where(x => x.Coordinates != null).ToList();
                 foreach (var item in isCor)
                 {
-                    var user = Tweetinvi.User.GetUserFromId(item.CreatedBy.Id);
-
+                    listUserInfo.Add(Tweetinvi.User.GetUserFromId(item.CreatedBy.Id));
+                    
                 }
 
             }
@@ -53,6 +55,7 @@ namespace TwitterSD.Controllers
                 ViewData["fecha"] = "No se pudieron cargar los tweets";
 
             }
+            ViewBag.userInfo = listUserInfo;
             ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd")+ "&minmagnitude=5";
 
             return View(isCor);
@@ -82,7 +85,13 @@ namespace TwitterSD.Controllers
                 throw;
             }
         }
-
+        public ActionResult viewProfile(int  idUser = 0)
+        {
+            Tweetinvi.Models.IUser user = Tweetinvi.User.GetUserFromId(Convert.ToInt64( idUser));
+           
+            ViewBag.userInfo = user.Timeline;
+            return View();
+        }
         // public async Task<ActionResult> BeginAsync()
         //{
         //    //var auth = new MvcSignInAuthorizer
