@@ -1,5 +1,33 @@
 ﻿
-     @((ViewBag.userInfo as Tweetinvi.Models.IUser).Timeline))
+@*<h4> </h4>
+<h4> @((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.Location)</h4>
+<h4> @((ViewBag.userInfo as Tweetinvi.Models.IUser).FollowersCount)</h4>
+<img src=" @((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.ProfileImageUrl) " alt="Mountain View" style="width:304px;height:228px;">*@
+
+@*@((ViewBag.userInfo as Tweetinvi.Models.IUser).GetUserTimeline().FirstOrDefault().Text)*@
+
+@*@foreach (var item in (ViewBag.userInfo as Tweetinvi.Models.IUser).Timeline)
     {
-        @item.Text;
-    }
+        <h5>@item.Text</h5>
+    }*@
+<div id="content" class="clearfix" style="margin-top:20px">
+    <section id="left">
+        <div id="userStats" class="clearfix">
+            <div class="pic">
+                <a href="#"><img src=" @((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.ProfileImageUrl) " width="150" height="150" /></a>
+            </div>
+            <div class="data">
+                <h1>@((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.Name)</h1>
+                <h3>@((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.Location)</h3>
+                <h4><a href="@((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.Url)">@((ViewBag.userInfo as Tweetinvi.Models.IUser).UserDTO.Url)</a></h4>
+                <div class="sep"></div>
+                <ul class="numbers clearfix">
+                    <li>Followers: <strong>@((ViewBag.userInfo as Tweetinvi.Models.IUser).FollowersCount)</strong></li>
+                    <li>Friends: <strong>@((ViewBag.userInfo as Tweetinvi.Models.IUser).FriendsCount)</strong></li>
+                    <li class="nobrdr">Statuses: <strong>@((ViewBag.userInfo as Tweetinvi.Models.IUser).StatusesCount)</strong></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+

@@ -5,123 +5,125 @@
         color: #EEE;
     }
 </style>
-@using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-horizontal" }))
-{
-<div class="container" style="margin-top: 8vh;">
-    <div class='col-md-5'>
-        <div class="form-group">
-            <div class='input-group date'>
-                <input id="datePiker1" name="endDate" class="date-picker  form-control" />
-                @*<span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>*@
+
+    @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-horizontal" }))
+    {
+        <div class="container" style="margin-top: 8vh;">
+            <div class='col-md-4'>
+                <div class="form-group">
+                    <div class='input-group date'>
+                        <input id="datePiker1" name="endDate" class="date-picker  form-control" />
+                        @*<span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>*@
+                    </div>
+                </div>
+            </div>
+            <div class='col-md-2'>
+                <button type="submit" class="btn btn-primary btn-lg waves-effect">Send</button>
             </div>
         </div>
+
+    }
+    <script type="text/javascript">
+        $(function () {
+            // This will make every element with the class "date-picker" into a DatePicker element
+            $('#datePiker1').datepicker();
+            $('#datePiker2').datepicker();
+
+        })
+        //$(function () {
+        //    $('#datetimepicker6').datepicker();
+        //    $('#datetimepicker7').datepicker({
+        //        useCurrent: false //Important! See issue #1075
+        //    });
+        //    $("#datetimepicker6").on("dp.change", function (e) {
+        //        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+        //    });
+        //    $("#datetimepicker7").on("dp.change", function (e) {
+        //        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+        //    });
+        //});
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3Yc9vDGze1j2cxNzmnJe1vRu66iI9NhI&signed_in=true">
+    </script>
+    <script type="text/javascript">
+
+
+
+        google.maps.event.addDomListener(window, "load", initMap);
+        window.addMarkers=new Array();
+        function initMap() {
+            window.map = new google.maps.Map(document.getElementById('map_canvas'), {
+                zoom: 11,
+                center: { lat: 41.876, lng: -87.624 }
+            });
+
+            var ctaLayer = new google.maps.KmlLayer({
+                url: '@Html.Raw(ViewBag.kmlQuery)',
+                map: window.map
+            });
+            for(i=0;i<window.addMarkers.length;i++){
+                window.addMarkers[i]();
+            }
+
+        }
+
+    </script>
+
+    <!-- This css is to give a nice big popup "info window" when a marker is clicked on the map -->
+    <style>
+        .infoDiv {
+            height: 200px;
+            width: 300px;
+            -webkit-user-select: none;
+            background-color: white;
+        }
+    </style>
+    <br />
+    <!-- This is the div that will contain the Google Map -->
+    <div id="map_canvas" style="height: 550px;"></div>
+    <div>
+        @{
+            foreach (var item in Model)
+            {
+                <script type="text/javascript">
+                    addMarkers.push(function(){
+                        var myLatLng = { lat: @item.Coordinates.Latitude.ToString().Replace(",","."), lng: @item.Coordinates.Longitude.ToString().Replace(",", ".") };
+
+                        var marker = new google.maps.Marker({
+                            position: myLatLng,
+                            animation: google.maps.Animation.DROP,
+                            title: 'Hello World!'
+                        });
+                        var infoWindow = new google.maps.InfoWindow({
+                            content: ('<p>Tweet: '+ '@item.Text'+'</p>' +
+                '<p>User: '+'@item.CreatedBy.UserIdentifier'+'</p>' +
+                //'<p>Cause: '+'bb'+'</p>' +
+                //'<p>Date: '+'ffff'+'</p>' +
+                //    '<p>Time: '+'asdf'+'</p>' +
+                    '<button onclick="myFunction(@item.CreatedBy.Id)">View profile</button>')
+
+                        });
+                        google.maps.event.addListener(marker, 'click', function () {
+                            infoWindow.open(map, marker);
+                        });
+                        marker.setMap(window.map);
+                    });
+                    var idU;
+
+                    function myFunction(varthis) {
+                        debugger;
+
+                        idU = varthis;
+                        window.location ='/Home/ViewProfile/'+varthis;
+                    };
+                </script>
+
+
+            }
+        }
+
+
+
     </div>
-    <div class='col-md-5'>
-        <button type="submit" class="btn btn-primary btn-lg waves-effect">Send</button>
-        </div>
-</div>
-
-}
-<script type="text/javascript">
-    $(function () {
-        // This will make every element with the class "date-picker" into a DatePicker element
-        $('#datePiker1').datepicker();
-        $('#datePiker2').datepicker();
-
-    })
-    //$(function () {
-    //    $('#datetimepicker6').datepicker();
-    //    $('#datetimepicker7').datepicker({
-    //        useCurrent: false //Important! See issue #1075
-    //    });
-    //    $("#datetimepicker6").on("dp.change", function (e) {
-    //        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
-    //    });
-    //    $("#datetimepicker7").on("dp.change", function (e) {
-    //        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
-    //    });
-    //});
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3Yc9vDGze1j2cxNzmnJe1vRu66iI9NhI&signed_in=true">
-</script>
-<script type="text/javascript">
-
-
-
-    google.maps.event.addDomListener(window, "load", initMap);
-    window.addMarkers=new Array();
-    function initMap() {
-        window.map = new google.maps.Map(document.getElementById('map_canvas'), {
-            zoom: 11,
-            center: { lat: 41.876, lng: -87.624 }
-        });
-
-        var ctaLayer = new google.maps.KmlLayer({
-            url: '@Html.Raw(ViewBag.kmlQuery)',
-            map: window.map
-        });
-        for(i=0;i<window.addMarkers.length;i++){
-            window.addMarkers[i]();
-        }
-
-    }
-
-</script>
-
-<!-- This css is to give a nice big popup "info window" when a marker is clicked on the map -->
-<style>
-    .infoDiv {
-        height: 200px;
-        width: 300px;
-        -webkit-user-select: none;
-        background-color: white;
-    }
-</style>
-<br />
-<!-- This is the div that will contain the Google Map -->
-<div id="map_canvas" style="height: 550px;"></div>
-<div>
-    @{
-        foreach (var item in Model)
-        {
-            <script type="text/javascript">
-                addMarkers.push(function(){
-                    var myLatLng = { lat: @item.Coordinates.Latitude.ToString().Replace(",","."), lng: @item.Coordinates.Longitude.ToString().Replace(",", ".") };
-
-                    var marker = new google.maps.Marker({
-                        position: myLatLng,
-                        animation: google.maps.Animation.DROP,
-                        title: 'Hello World!'
-                    });
-                    var infoWindow = new google.maps.InfoWindow({
-                        content: ('<p>Event Name: '+ '@item.Text'+'</p>' +
-            '<p>User: '+'@item.CreatedBy.UserIdentifier'+'</p>' +
-            '<p>Cause: '+'bb'+'</p>' +
-            '<p>Date: '+'ffff'+'</p>' +
-                '<p>Time: '+'asdf'+'</p>' +
-                '<button onclick="myFunction(@item.CreatedBy.Id)">Click me</button>')
-
-                    });
-                    google.maps.event.addListener(marker, 'click', function () {
-                        infoWindow.open(map, marker);
-                    });
-                    marker.setMap(window.map);
-                });
-                var idU;
-
-                function myFunction(varthis) {
-                    debugger;
-                    idU = varthis;
-                    window.location ='/Home/viewProfile/'+varthis;
-                };
-            </script>
-
-
-        }
-    }
-
-
-
-</div>

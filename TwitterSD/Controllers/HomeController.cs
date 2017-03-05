@@ -14,6 +14,9 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Tweetinvi;
+using Tweetinvi.Credentials.Models;
+using Tweetinvi.Models;
+using Tweetinvi.Parameters;
 using TwitterSD.Models;
 
 namespace TwitterSD.Controllers
@@ -40,13 +43,13 @@ namespace TwitterSD.Controllers
             var tweet = Tweetinvi.Search.SearchTweets(query);
             List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
             List<Tweetinvi.Models.IUser> listUserInfo = new List<Tweetinvi.Models.IUser>();
-                if (tweet != null)
+            if (tweet != null)
             {
                 isCor = tweet.Where(x => x.Coordinates != null).ToList();
                 foreach (var item in isCor)
                 {
                     listUserInfo.Add(Tweetinvi.User.GetUserFromId(item.CreatedBy.Id));
-                    
+
                 }
 
             }
@@ -56,7 +59,7 @@ namespace TwitterSD.Controllers
 
             }
             ViewBag.userInfo = listUserInfo;
-            ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd")+ "&minmagnitude=5";
+            ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd") + "&minmagnitude=5";
 
             return View(isCor);
         }
@@ -85,12 +88,49 @@ namespace TwitterSD.Controllers
                 throw;
             }
         }
-        public ActionResult viewProfile(int  idUser = 0)
+        public ActionResult ViewProfile(int id)
         {
-            Tweetinvi.Models.IUser user = Tweetinvi.User.GetUserFromId(Convert.ToInt64( idUser));
-           
-            ViewBag.userInfo = user.Timeline;
+            Tweetinvi.Models.IUser user = Tweetinvi.User.GetUserFromId(Convert.ToInt64(id));
+
+            ViewBag.userInfo = user;
             return View();
+        }
+        private IAuthenticationContext _authenticationContext;
+        public ConsumerCredentials appCreds;
+        // Step 1 : Redirect user to go on Twitter.com to authenticate
+        public ActionResult TwitterAuth()
+        {
+            appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
+
+            // Specify the url you want the user to be redirected to
+            var redirectURL = "http://" + Request.Url.Authority + "/Home/ValidateTwitterAuth";
+            _authenticationContext = AuthFlow.InitAuthentication(appCreds, redirectURL);
+
+            return new RedirectResult(_authenticationContext.AuthorizationURL);
+        }
+        public ActionResult ValidateTwitterAuth()
+        {
+            // Get some information back from the URL
+            var verifierCode = Request.Params.Get("oauth_verifier");
+
+
+            var token = new AuthenticationToken()
+            {
+                AuthorizationKey = "Wv1B17cYiPwMp3x5cqq8YC9h1",
+                AuthorizationSecret = "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL",
+                ConsumerCredentials = appCreds
+
+            };
+
+            // And then instead of passing the AuthenticationContext, just pass the AuthenticationToken
+            var userCreds = AuthFlow.CreateCredentialsFromVerifierCode(verifierCode, token);
+            // Create the user credentials
+            //var userCreds = AuthFlow.CreateCredentialsFromVerifierCode(verifierCode, _authenticationContext);
+
+            // Do whatever you want with the user now!
+            var user = Tweetinvi.User.GetAuthenticatedUser(userCreds);
+            ViewBag.user = user.ScreenName;
+            return RedirectToAction("Index");
         }
         // public async Task<ActionResult> BeginAsync()
         //{
@@ -108,32 +148,32 @@ namespace TwitterSD.Controllers
         //}
         // public async Task<ActionResult> CompleteAsync()
         // {
-             //var auth = new MvcAuthorizer
-             //{
-             //    CredentialStore = new SessionStateCredentialStore()
-             //};
+        //var auth = new MvcAuthorizer
+        //{
+        //    CredentialStore = new SessionStateCredentialStore()
+        //};
 
-             //await auth.CompleteAuthorizeAsync(Request.Url);
+        //await auth.CompleteAuthorizeAsync(Request.Url);
 
-             // This is how you access credentials after authorization.
-             // The oauthToken and oauthTokenSecret do not expire.
-             // You can use the userID to associate the credentials with the user.
-             // You can save credentials any way you want - database, 
-             //   isolated storage, etc. - it's up to you.
-             // You can retrieve and load all 4 credentials on subsequent 
-             //   queries to avoid the need to re-authorize.
-             // When you've loaded all 4 credentials, LINQ to Twitter will let 
-             //   you make queries without re-authorizing.
-             //
-         //    var credentials = auth.CredentialStore;
-         //    string oauthToken = credentials.OAuthToken;
-         //    string oauthTokenSecret = credentials.OAuthTokenSecret;
-         //    string screenName = credentials.ScreenName;
-         //    ulong userID = credentials.UserID;
-         //    //
+        // This is how you access credentials after authorization.
+        // The oauthToken and oauthTokenSecret do not expire.
+        // You can use the userID to associate the credentials with the user.
+        // You can save credentials any way you want - database, 
+        //   isolated storage, etc. - it's up to you.
+        // You can retrieve and load all 4 credentials on subsequent 
+        //   queries to avoid the need to re-authorize.
+        // When you've loaded all 4 credentials, LINQ to Twitter will let 
+        //   you make queries without re-authorizing.
+        //
+        //    var credentials = auth.CredentialStore;
+        //    string oauthToken = credentials.OAuthToken;
+        //    string oauthTokenSecret = credentials.OAuthTokenSecret;
+        //    string screenName = credentials.ScreenName;
+        //    ulong userID = credentials.UserID;
+        //    //
 
-         //    return RedirectToAction("Index", "Home");
-         //}
+        //    return RedirectToAction("Index", "Home");
+        //}
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -150,8 +190,8 @@ namespace TwitterSD.Controllers
         //    var ctx = new TwitterContext(auth);
 
         //    var tweets = ctx.Status.Where(x=>x.Type == StatusType.Home).FirstOrDefault();
-                
-                
+
+
 
         //    return View(tweets);
         //}
@@ -206,7 +246,7 @@ namespace TwitterSD.Controllers
         //            FormattedText = ParseTweet(t.Text)
         //        })
         //    .ToString();
-                   
+
         //    }
         //    catch (Exception) { }
         //    return tweets.ToString();
@@ -257,9 +297,9 @@ namespace TwitterSD.Controllers
 
         //    Console.WriteLine("\nTweets for " + twitterCtx.User.FirstOrDefault().ScreenNameResponse + "\n");
         //    List<string> s = new List<string>();
-           
+
         //    var tweets3 =
-               
+
         //       (from tweet in twitterCtx.Status
         //        where tweet.Type == StatusType.Home
         //        select tweet)
