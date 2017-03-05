@@ -129,8 +129,30 @@ namespace TwitterSD.Controllers
 
             // Do whatever you want with the user now!
             var user = Tweetinvi.User.GetAuthenticatedUser(userCreds);
+            this.Session["ProfileData"] = user;
+        
             ViewBag.user = user.ScreenName;
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Logout()
+        {
+            try
+            {
+                if (this.Session["ProfileData"] != null)
+                {
+                    this.Session["ProfileData"] = null;
+
+                }
+               
+                return Redirect("/Home/Index");
+
+
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
         }
         // public async Task<ActionResult> BeginAsync()
         //{
