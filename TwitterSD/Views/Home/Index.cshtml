@@ -14,10 +14,7 @@
             <div class='col-md-4'>
                 <div class="form-group">
                     <div class='input-group date'>
-                        <input id="datePiker1" name="endDate" class="date-picker  form-control" />
-                        @*<span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>*@
+                        <input id="datePiker1" placeholder="Select date" name="endDate" class="date-picker  form-control" />
                     </div>
                 </div>
             </div>
@@ -25,7 +22,6 @@
                 <button type="submit" class="btn btn-primary btn-lg waves-effect">Send</button>
             </div>
         </div>
-
     }
     <script type="text/javascript">
         $(function () {
@@ -34,25 +30,10 @@
             $('#datePiker2').datepicker();
 
         })
-        //$(function () {
-        //    $('#datetimepicker6').datepicker();
-        //    $('#datetimepicker7').datepicker({
-        //        useCurrent: false //Important! See issue #1075
-        //    });
-        //    $("#datetimepicker6").on("dp.change", function (e) {
-        //        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
-        //    });
-        //    $("#datetimepicker7").on("dp.change", function (e) {
-        //        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
-        //    });
-        //});
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3Yc9vDGze1j2cxNzmnJe1vRu66iI9NhI&signed_in=true">
     </script>
     <script type="text/javascript">
-
-
-
         google.maps.event.addDomListener(window, "load", initMap);
         window.addMarkers=new Array();
         function initMap() {
@@ -68,11 +49,8 @@
             for(i=0;i<window.addMarkers.length;i++){
                 window.addMarkers[i]();
             }
-
         }
-
     </script>
-
     <!-- This css is to give a nice big popup "info window" when a marker is clicked on the map -->
     <style>
         .infoDiv {
@@ -101,9 +79,6 @@
                         var infoWindow = new google.maps.InfoWindow({
                             content: ('<p>Tweet: '+ '@item.Text'+'</p>' +
                 '<p>User: '+'@item.CreatedBy.UserIdentifier'+'</p>' +
-                //'<p>Cause: '+'bb'+'</p>' +
-                //'<p>Date: '+'ffff'+'</p>' +
-                //    '<p>Time: '+'asdf'+'</p>' +
                     '<button onclick="myFunction(@item.CreatedBy.Id)">View profile</button>')
 
                         });
@@ -121,8 +96,6 @@
                         window.location ='/Home/ViewProfile/'+varthis;
                     };
                 </script>
-
-
             }
         }
     </div>
