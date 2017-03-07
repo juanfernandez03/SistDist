@@ -25,38 +25,52 @@ namespace TwitterSD.Controllers
     {
         public ActionResult Index(string endDate)
         {
-            if (string.IsNullOrEmpty(endDate))
-            {
-                endDate = DateTime.Now.ToString("MM/dd/yyyy");
-            }
-            DateTime dt_endDate;
-            DateTime.TryParseExact(endDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt_endDate);
-            DateTime dt_startDate = dt_endDate.AddDays(-7);
-            string startDate = dt_startDate.ToString("MM/dd/yyyy");
-            // Set up your credentials (https://apps.twitter.com)
-            Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
-            // string query = "earthquake 02/27/2017" + dt_endDate.ToString("yyyy-MM-dd");
-            string query = "earthquake " +dt_endDate.ToString("yyyy-MM-dd");
-            //string query = "quake";
-            var tweet = Tweetinvi.Search.SearchTweets(query);
-            List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
-            List<Tweetinvi.Models.IUser> listUserInfo = new List<Tweetinvi.Models.IUser>();
-            if (tweet != null)
-            {
-                isCor = tweet.Where(x => x.Coordinates != null).ToList();
-                foreach (var item in isCor)
+            //if ((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null)
+            //{
+          
+                if (string.IsNullOrEmpty(endDate))
                 {
-                    listUserInfo.Add(Tweetinvi.User.GetUserFromId(item.CreatedBy.Id));
+                    endDate = DateTime.Now.ToString("MM/dd/yyyy");
                 }
-            }
-            else
-            {
-                ViewData["fecha"] = "No se pudieron cargar los tweets";
-            }
-            ViewBag.userInfo = listUserInfo;
-            ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd") + "&minmagnitude=5";
+                DateTime dt_endDate;
+                DateTime.TryParseExact(endDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt_endDate);
+                DateTime dt_startDate = dt_endDate.AddDays(-1);
+                string startDate = dt_startDate.ToString("MM/dd/yyyy");
+                // Set up your credentials (https://apps.twitter.com)
+                Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
+                // string query = "earthquake 02/27/2017" + dt_endDate.ToString("yyyy-MM-dd");
+                var searchParameter = new SearchTweetsParameters("earthquake")
+                {
+                    MaximumNumberOfResults = 1000,
+                    Until = new DateTime(dt_endDate.Year, dt_endDate.Month, dt_endDate.Day),
+                    Since = new DateTime(dt_startDate.Year, dt_startDate.Month, dt_startDate.Day)
 
-            return View(isCor);
+                };
+
+                var tweet = Tweetinvi.Search.SearchTweets(searchParameter);
+                List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
+                List<Tweetinvi.Models.IUser> listUserInfo = new List<Tweetinvi.Models.IUser>();
+                if (tweet != null)
+                {
+                    isCor = tweet.Where(x => x.Coordinates != null).ToList();
+                    foreach (var item in isCor)
+                    {
+                        listUserInfo.Add(Tweetinvi.User.GetUserFromId(item.CreatedBy.Id));
+                    }
+                }
+                else
+                {
+                    ViewData["fecha"] = "No se pudieron cargar los tweets";
+                }
+                ViewBag.userInfo = listUserInfo;
+                ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd") + "&minmagnitude=5";
+                return View(isCor);
+
+            //}
+            //else
+            //{
+            //    return View();
+            //}
         }
 
         string GET(string url)
@@ -108,7 +122,7 @@ namespace TwitterSD.Controllers
             // Get some information back from the URL
             var verifierCode = Request.Params.Get("oauth_verifier");
 
-
+            appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
             var token = new AuthenticationToken()
             {
                 AuthorizationKey = "Wv1B17cYiPwMp3x5cqq8YC9h1",
@@ -149,17 +163,6 @@ namespace TwitterSD.Controllers
                 return RedirectToAction("Index");
             }
         }     
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
+       
     }
 }
