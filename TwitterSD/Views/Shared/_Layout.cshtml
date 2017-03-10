@@ -5,16 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Sistemas distribuidos</title>
-        @*<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" />*@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryui")
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/themes/base/css")
     @Scripts.Render("~/bundles/modernizr")
-
-
-
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -28,11 +24,6 @@
                 @Html.ActionLink("Sistemas distribuidos", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                @*<ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Inicio", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Login", "TwitterAuth", "Home")</li>
-                    <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>
-                </ul>*@
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
@@ -44,19 +35,5 @@
             <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
         </footer>
     </div>
-    @*@Scripts.Render("~/plugins/jquery/js")
-    @Scripts.Render("~/plugins/bootstrap/js")*@
-
-    <!-- jQuery UI CSS Reference -->
-    <!-- Required jQuery and jQuery UI Javascript references -->
-    @*<script src="@Url.Content("~/Scripts/jquery-1.12.4.js")"></script>
-    <script src="@Url.Content("~/Scripts/jquery-ui-1.12.1.js")"></script>*@
-    @*@Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryui")
-
-
-    @RenderSection("scripts", required: false)*@
-
 </body>
 </html>

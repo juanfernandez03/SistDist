@@ -117,7 +117,6 @@ namespace TwitterSD.Controllers
             {           
             // Get some information back from the URL
             var verifierCode = Request.Params.Get("oauth_verifier");
-            appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
             var token = new AuthenticationToken()
             {
                 AuthorizationKey = "Wv1B17cYiPwMp3x5cqq8YC9h1",
