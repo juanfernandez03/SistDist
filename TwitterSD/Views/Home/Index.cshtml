@@ -7,10 +7,8 @@
 </style>
 @if ((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null)
 {
-
     using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-horizontal" }))
     {
-
         <div class="container" style="margin-top: 8vh;">
             <div class='col-md-4'>
                 <div class="form-group">
@@ -37,10 +35,7 @@
             $('#datePiker1').datepicker({
                 minDate: dat.addDays(-7),
                 maxDate: dat.addDays(0)
-
             })
-            $('#datePiker2').datepicker();
-
         })
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3Yc9vDGze1j2cxNzmnJe1vRu66iI9NhI&signed_in=true">
@@ -92,7 +87,6 @@
                             content: ('<p><b>Tweet:</b> '+ '@item.Text'+'</p>' +
                 '<p><b>User:</b> '+'@item.CreatedBy.UserIdentifier'+'</p>' +
                     '<button onclick="myFunction(@item.CreatedBy.Id)">View profile</button>')
-
                         });
                         google.maps.event.addListener(marker, 'click', function () {
                             infoWindow.open(map, marker);
