@@ -25,8 +25,8 @@ namespace TwitterSD.Controllers
     {
         public ActionResult Index(string endDate)
         {
-            //if ((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null)
-            //{
+            if ((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null)
+            {
           
                 if (string.IsNullOrEmpty(endDate))
                 {
@@ -36,9 +36,7 @@ namespace TwitterSD.Controllers
                 DateTime.TryParseExact(endDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt_endDate);
                 DateTime dt_startDate = dt_endDate.AddDays(-1);
                 string startDate = dt_startDate.ToString("MM/dd/yyyy");
-                // Set up your credentials (https://apps.twitter.com)
                 Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
-                // string query = "earthquake 02/27/2017" + dt_endDate.ToString("yyyy-MM-dd");
                 var searchParameter = new SearchTweetsParameters("earthquake")
                 {
                     MaximumNumberOfResults = 1000,
@@ -46,7 +44,6 @@ namespace TwitterSD.Controllers
                     Since = new DateTime(dt_startDate.Year, dt_startDate.Month, dt_startDate.Day)
 
                 };
-
                 var tweet = Tweetinvi.Search.SearchTweets(searchParameter);
                 List<Tweetinvi.Models.ITweet> isCor = new List<Tweetinvi.Models.ITweet>();
                 List<Tweetinvi.Models.IUser> listUserInfo = new List<Tweetinvi.Models.IUser>();
@@ -66,11 +63,11 @@ namespace TwitterSD.Controllers
                 ViewBag.kmlQuery = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=kml&starttime=" + dt_startDate.ToString("yyyy-MM-dd") + "&endtime=" + dt_endDate.ToString("yyyy-MM-dd") + "&minmagnitude=5";
                 return View(isCor);
 
-            //}
-            //else
-            //{
-            //    return View();
-            //}
+            }
+            else
+            {
+                return View();
+            }
         }
 
         string GET(string url)
@@ -106,12 +103,9 @@ namespace TwitterSD.Controllers
         }
         private IAuthenticationContext _authenticationContext;
         public ConsumerCredentials appCreds;
-        // Step 1 : Redirect user to go on Twitter.com to authenticate
         public ActionResult TwitterAuth()
         {
             appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
-
-            // Specify the url you want the user to be redirected to
             var redirectURL = "http://" + Request.Url.Authority + "/Home/ValidateTwitterAuth";
             _authenticationContext = AuthFlow.InitAuthentication(appCreds, redirectURL);
 
@@ -119,29 +113,30 @@ namespace TwitterSD.Controllers
         }
         public ActionResult ValidateTwitterAuth()
         {
+            try
+            {           
             // Get some information back from the URL
             var verifierCode = Request.Params.Get("oauth_verifier");
-
             appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
             var token = new AuthenticationToken()
             {
                 AuthorizationKey = "Wv1B17cYiPwMp3x5cqq8YC9h1",
                 AuthorizationSecret = "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL",
                 ConsumerCredentials = appCreds
-
             };
-
             // And then instead of passing the AuthenticationContext, just pass the AuthenticationToken
             var userCreds = AuthFlow.CreateCredentialsFromVerifierCode(verifierCode, token);
             // Create the user credentials
-            //var userCreds = AuthFlow.CreateCredentialsFromVerifierCode(verifierCode, _authenticationContext);
-
-            // Do whatever you want with the user now!
             var user = Tweetinvi.User.GetAuthenticatedUser(userCreds);
-            this.Session["ProfileData"] = user;
-        
+            this.Session["ProfileData"] = user;       
             ViewBag.user = user.ScreenName;
             return RedirectToAction("Index");
+            }
+            catch (Exception )
+            {
+
+                return JavaScript("<script>alert(\"Error in login\")</script>");
+            }
         }
 
         public ActionResult Logout()
@@ -152,10 +147,8 @@ namespace TwitterSD.Controllers
                 {
                     this.Session["ProfileData"] = null;
 
-                }
-               
+                }              
                 return Redirect("/Home/Index");
-
 
             }
             catch

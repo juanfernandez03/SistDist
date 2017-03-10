@@ -3,7 +3,7 @@
 
 
     <ul class="nav navbar-nav navbar-right" >
-        <li style="margin-top: 5vh; color: gray;">
+        <li style="margin-top: 2vh; color: gray;">
            @((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null ? (Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser).ScreenName : "")        
         </li>
         <li>@Html.ActionLink("Logout", "Logout", "Home")</li>

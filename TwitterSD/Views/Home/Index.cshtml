@@ -5,10 +5,10 @@
         color: #EEE;
     }
 </style>
-@*@if ((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null)
-{*@
+@if ((Session["ProfileData"] as Tweetinvi.Models.IAuthenticatedUser) != null)
+{
 
-    @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-horizontal" }))
+    using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-horizontal" }))
     {
 
         <div class="container" style="margin-top: 8vh;">
@@ -26,9 +26,18 @@
     }
     <script type="text/javascript">
         $(function () {
-            // This will make every element with the class "date-picker" into a DatePicker element
+            Date.prototype.addDays = function(days) {
+                var dat = new Date(this.valueOf());
+                dat.setDate(dat.getDate() + days);
+                return dat;
+            }
+
+            var dat = new Date();
+
             $('#datePiker1').datepicker({
-                startDate: -7
+                minDate: dat.addDays(-7),
+                maxDate: dat.addDays(0)
+
             })
             $('#datePiker2').datepicker();
 
@@ -80,8 +89,8 @@
                             title: 'Hello World!'
                         });
                         var infoWindow = new google.maps.InfoWindow({
-                            content: ('<p>Tweet: '+ '@item.Text'+'</p>' +
-                '<p>User: '+'@item.CreatedBy.UserIdentifier'+'</p>' +
+                            content: ('<p><b>Tweet:</b> '+ '@item.Text'+'</p>' +
+                '<p><b>User:</b> '+'@item.CreatedBy.UserIdentifier'+'</p>' +
                     '<button onclick="myFunction(@item.CreatedBy.Id)">View profile</button>')
 
                         });
@@ -102,4 +111,4 @@
             }
         }
     </div>
-   //}
+   }
