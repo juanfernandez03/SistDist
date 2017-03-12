@@ -12,4 +12,12 @@ namespace TwitterSD.Models
         public string nameUser { get; set; }
 
     }
+
+    public static class TweeterDataLogin
+        
+    {
+        public static string authorizationKey { get; set; }
+        public static string authorizationSecret { get; set; }
+
+    }
 }

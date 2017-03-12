@@ -39,7 +39,7 @@ namespace TwitterSD.Controllers
                 Auth.SetUserCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL", "1014538885-tWPygR1Cl7UrWAPYe40JRGgjUGxVmVRupXO0x5y", "lWyEwpOcpDuuCfnULxK4naJflmeognhELjz3QsMTJ1XIE");
                 var searchParameter = new SearchTweetsParameters("earthquake")
                 {
-                    MaximumNumberOfResults = 1000,
+                    MaximumNumberOfResults = 500,
                     Until = new DateTime(dt_endDate.Year, dt_endDate.Month, dt_endDate.Day),
                     Since = new DateTime(dt_startDate.Year, dt_startDate.Month, dt_startDate.Day)
 
@@ -103,11 +103,14 @@ namespace TwitterSD.Controllers
         }
         private IAuthenticationContext _authenticationContext;
         public ConsumerCredentials appCreds;
+
         public ActionResult TwitterAuth()
         {
             appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
             var redirectURL = "http://" + Request.Url.Authority + "/Home/ValidateTwitterAuth";
             _authenticationContext = AuthFlow.InitAuthentication(appCreds, redirectURL);
+            TwitterSD.Models.TweeterDataLogin.authorizationKey = _authenticationContext.Token.AuthorizationKey;
+            TwitterSD.Models.TweeterDataLogin.authorizationSecret = _authenticationContext.Token.AuthorizationSecret;
 
             return new RedirectResult(_authenticationContext.AuthorizationURL);
         }
@@ -117,10 +120,12 @@ namespace TwitterSD.Controllers
             {           
             // Get some information back from the URL
             var verifierCode = Request.Params.Get("oauth_verifier");
+            appCreds = new ConsumerCredentials("Wv1B17cYiPwMp3x5cqq8YC9h1", "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL");
+
             var token = new AuthenticationToken()
             {
-                AuthorizationKey = "Wv1B17cYiPwMp3x5cqq8YC9h1",
-                AuthorizationSecret = "PdUfX3YAY0fO7wO9wlwdf6ZMZRq6bGfQAIfJDgAo1muqY6KtEL",
+                AuthorizationKey = TwitterSD.Models.TweeterDataLogin.authorizationKey,
+                AuthorizationSecret = TwitterSD.Models.TweeterDataLogin.authorizationSecret,
                 ConsumerCredentials = appCreds
             };
             // And then instead of passing the AuthenticationContext, just pass the AuthenticationToken
@@ -131,10 +136,9 @@ namespace TwitterSD.Controllers
             ViewBag.user = user.ScreenName;
             return RedirectToAction("Index");
             }
-            catch (Exception )
+            catch (Exception e)
             {
-
-                return JavaScript("<script>alert(\"Error in login\")</script>");
+                return JavaScript("Error no se puedo cargar el usuario. "+ e.Message);
             }
         }
 
@@ -145,7 +149,8 @@ namespace TwitterSD.Controllers
                 if (this.Session["ProfileData"] != null)
                 {
                     this.Session["ProfileData"] = null;
-
+                    TwitterSD.Models.TweeterDataLogin.authorizationKey = "";
+                    TwitterSD.Models.TweeterDataLogin.authorizationSecret = "";
                 }              
                 return Redirect("/Home/Index");
 
